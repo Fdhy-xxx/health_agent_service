@@ -1,11 +1,21 @@
 from typing import TypedDict, Optional, List, Literal
 
+from pydantic import BaseModel, Field
+
+
+
+# class EvaluationResult(TypedDict):
+#     grade: Literal["pass", "fail"]  # 状态机路由的唯一依据
+#     feedback: str  # 找茬反馈意见，如果是不合格，需要写明原因
 
 # 1. 定义专家审查结果的结构化输出（用于 Evaluator 节点）
-class EvaluationResult(TypedDict):
-    grade: Literal["pass", "fail"]  # 状态机路由的唯一依据
-    feedback: str  # 找茬反馈意见，如果是不合格，需要写明原因
-
+class EvaluationResult(BaseModel):
+    grade: Literal["pass", "fail"] = Field(
+        description="最终打分，必须是 pass 或 fail"
+    )
+    feedback: str = Field(
+        description="找茬反馈意见，如果是 fail，必须给出明确的修改方向"
+    )
 
 # 2. 核心：共享状态托盘（流转于各个 Node 之间）
 class HealthAgentState(TypedDict):
