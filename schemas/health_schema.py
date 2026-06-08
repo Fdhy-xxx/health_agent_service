@@ -9,23 +9,30 @@ class HealthPlanRequest(BaseModel):
     # 基础身体数据
     height: float = Field(
         ...,
-        gt=50.0, lt=250.0,
-        description="身高 (cm)，必须介于 50 到 250 之间",
+        gt=10.0, lt=350.0,
+        description="身高 (cm)，必须介于 10 到 350 之间",
         json_schema_extra={"example": 180.0}
     )
     weight: float = Field(
         ...,
-        gt=20.0, lt=200.0,
-        description="体重 (kg)，必须介于 20 到 200 之间",
+        gt=0.0, lt=1000.0,
+        description="体重 (kg)，必须介于 0 到 1000 之间",
         json_schema_extra={"example": 75.0}
     )
 
-    # 运动能力指标
-    current_squat_1rm: float = Field(
-        ...,
-        ge=0.0, lt=500.0,
-        description="极限深蹲重量 1RM (kg)，没有训练经验可传 0",
-        json_schema_extra={"example": 107.5}
+    # 运动能力指标(拆分为动作和重量)
+    movement_type: str = Field(
+        "深蹲",  # 默认值
+        max_length=50,
+        description="测试1RM的动作名称，如：深蹲、卧推、硬拉",
+        json_schema_extra={"example": "卧推"}
+    )
+    # 运动能力指标(可选，如无经验可不填)
+    current_1rm: float = Field(
+        0.0,
+        ge=0.0, lt=2000.0,
+        description="该动作的极限重量 1RM (kg)，没有经验传 0",
+        json_schema_extra={"example": 80.0}
     )
 
     # 主观诉求

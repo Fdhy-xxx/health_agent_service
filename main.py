@@ -2,6 +2,9 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
+from agent.graph import run_health_agent
+# 导入拆分出去的路由组件
+from routers.health_router import router as health_router
 # 【关键】在导入任何自定义业务模块之前，先加载环境变量！
 # 这样后续无论哪个文件需要用到 os.getenv("DEEPSEEK_API_KEY") 都能拿到
 load_dotenv()
@@ -20,11 +23,8 @@ app = FastAPI(
 async def root():
     return {"message": "Hello World"}
 
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
-
+# 注册路由组件
+app.include_router(health_router)
 
 @app.post("/api/health-plan", summary="生成专属运动健康计划")
 async def generate_health_plan(request_data: HealthPlanRequest):
@@ -35,23 +35,29 @@ async def generate_health_plan(request_data: HealthPlanRequest):
     print("====== 成功接收并校验来自 Java 端的数据 ======")
     print(f"身高: {request_data.height} cm")
     print(f"体重: {request_data.weight} kg")
-    print(f"极限深蹲: {request_data.current_squat_1rm} kg")
+    print(f"动作类型: {request_data.movement_type}")
+    print(f"极限重量: {request_data.current_1rm} kg")
     print(f"核心目标: {request_data.primary_goal}")
     if request_data.dormitory_rules:
         print(f"特殊限制: {request_data.dormitory_rules}")
     print("==============================================")
 
-    # TODO: 这里即将接入 LangGraph 的入口代码
-    # result = await run_health_agent(request_data)
+    # 将 Pydantic 模型转为 LangGraph State 所需的字典格式
+    # 用一行代码直接搞定解包与字段初始化
+    initial_state = {
+        **request_data.model_dump(),  # 自动解包平铺前端传来的所有合法数据
+        "assessment": None,
+        "training_plan": None,
+        "evaluation": None,
+        "iteration_count": 0,
+    }
 
-    # 目前先返回一个测试用的 Mock 数据，证明接口通了
+    # 调用 LangGraph 状态机
+    result = await run_health_agent.ainvoke(initial_state)
     return {
         "code": 200,
-        "message": "AI 大脑已接收数据，LangGraph 节点暂未实装，敬请期待！",
-        "data": {
-            "received_status": "success",
-            "next_step": "即将进入 Node 1 (Analyzer)"
-        }
+        "message": "AI 大脑已完成分析",
+        "data": result
     }
 
 

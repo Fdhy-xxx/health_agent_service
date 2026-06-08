@@ -17,4 +17,5 @@ from operator import add
 from dotenv import load_dotenv
 from pydantic.dataclasses import dataclass
 
+load_dotenv()
 llm = init_chat_model("deepseek-chat")

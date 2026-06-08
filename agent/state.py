@@ -12,7 +12,8 @@ class HealthAgentState(TypedDict):
     # --- 原始输入层（Java 侧传过来的冷数据，之后无法重建） ---
     height: float  # 身高 (cm)
     weight: float  # 体重 (kg)
-    current_squat_1rm: float  # 极限深蹲重量 (kg)
+    movement_type: str  # 运动能力指标(拆分为动作和重量)
+    current_1rm: float  # 极限深蹲,卧推重量 (kg)
     primary_goal: str  # 核心目标（例如：实战扣篮、减脂）
     dormitory_rules: str  # 外部作息限制（例如：1:00 准时断电）
 
