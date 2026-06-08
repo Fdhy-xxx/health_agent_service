@@ -1,21 +1,14 @@
-from typing import Annotated, TypedDict, Literal
-from langgraph.graph import StateGraph, START, END
-from langgraph.graph.message import add_messages, MessagesState
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.types import Command, CachePolicy, interrupt
-from langgraph.runtime import Runtime
-from langgraph.types import RetryPolicy, TimeoutPolicy
-from langgraph.errors import NodeError
-
-from langchain_core.messages import (
-    BaseMessage, SystemMessage, HumanMessage, ToolMessage
-)
+import os
 from langchain.chat_models import init_chat_model
-from langchain.tools import tool
-from IPython.display import Image, display
-from operator import add
 from dotenv import load_dotenv
-from pydantic.dataclasses import dataclass
+
 
 load_dotenv()
-llm = init_chat_model("deepseek-chat")
+
+llm = init_chat_model(
+    model="qwen-plus",  # 模型选择qwen-plus
+    model_provider="openai",
+    base_url=os.getenv("DASHSCOPE_BASE_URL"),
+    api_key=os.getenv("DASHSCOPE_API_KEY")
+)
+#llm = init_chat_model("deepseek-chat") Deepseek模型

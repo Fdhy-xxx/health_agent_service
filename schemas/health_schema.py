@@ -48,7 +48,7 @@ class HealthPlanRequest(BaseModel):
         None,
         max_length=500,
         description="外部作息或场地限制条件",
-        json_schema_extra={"example": "宿舍凌晨 1:00 准时断电熄灯"}
+        json_schema_extra={"example": "每周健身三天"}
     )
 
     model_config = {
