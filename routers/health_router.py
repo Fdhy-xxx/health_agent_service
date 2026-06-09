@@ -33,7 +33,10 @@ async def generate_health_plan(request_data: HealthPlanRequest):
         "iteration_count": 0,
     }
 
-    result = await run_health_agent.ainvoke(initial_state)
+    # 定义配置，传入会话 ID（这里先写死用于测试，实际应从 token 中提取）
+    config = {"configurable": {"thread_id": "user_0609"}}
+
+    result = await run_health_agent.ainvoke(initial_state, config=config)
     return {
         "code": 200,
         "message": "AI 大脑已完成分析",
